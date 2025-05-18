@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Happiness Quiz for Lumine 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffb3ba, #bae1ff);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #4a4a4a;
+        }
+
+        .slide {
+            display: none;
+            max-width: 600px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        .active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        .heart-btn {
+            background: #ff69b4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+            width: 80%;
+        }
+
+        .heart-btn:hover {
+            transform: scale(1.05);
+            background: #ff1493;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        #userName, #birthMonth, #birthDay {
+            padding: 15px;
+            margin: 15px auto;
+            border: 3px solid #ff69b4;
+            border-radius: 20px;
+            width: 80%;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        #userName:focus, #birthMonth:focus, #birthDay:focus {
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+            outline: none;
+        }
+
+        .dob-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        #birthMonth, #birthDay {
+            padding: 15px;
+            border: 3px solid #ff69b4;
+            border-radius: 20px;
+            font-size: 16px;
+            background: white;
+        }
+
+        #birthMonth { width: 200px; }
+        #birthDay { width: 100px; }
+
+        .quiz-option {
+            background: white;
+            padding: 20px;
+            margin: 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .quiz-option:hover {
+            transform: translateY(-3px);
+            border-color: #ff69b4;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.2);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #ffe6f0;
+            border-radius: 5px;
+            margin: 30px 20px;
+        }
+
+        .progress {
+            height: 100%;
+            background: #ff69b4;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .love-meter {
+            width: 100%;
+            height: 30px;
+            background: #ffe6f0;
+            border-radius: 15px;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .love-meter-fill {
+            height: 100%;
+            background: linear-gradient(to right, #ff69b4, #ff1493);
+            border-radius: 15px;
+            width: 100%;
+        }
+
+        .love-meter-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ff69b4;
+        }
+
+        .flying-heart {
+            position: absolute;
+            font-size: 16px;
+            opacity: 0.5;
+            animation: fly 5s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes fly {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .picture-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .picture-placeholder {
+            width: 200px;
+            height: 200px;
+            background-color: #eee;
+            margin: 10px auto;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #aaa;
+        }
+
+        .hearts {
+            position: relative;
+            height: 0;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .heart:nth-child(1) {
+            left: 20%;
+            animation: floatUp 2s ease-out;
+        }
+
+        .heart:nth-child(2) {
+            left: 50%;
+            animation: floatUp 2s ease-out 0.2s;
+        }
+
+        .heart:nth-child(3) {
+            left: 80%;
+            animation: floatUp 2s ease-out 0.4s;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+
+        .input-correct {
+            border-color: green;
+        }
+
+        .input-incorrect {
+            border-color: red;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Relationship Selection -->
+    <div class="slide active" id="slide1">
+        <h2>🌸 Welcome Loved one 🌸</h2>
+        <p>Before we start, who are you to the creator? 💭</p>
+        <button class="heart-btn" onclick="showSlide(2)">Closed One ❤️</button>
+        <button class="heart-btn" onclick="alert('🚫 This path is for special hearts only 💔')">Others 👋</button>
+        <button class="heart-btn" onclick="alert('😢 My heart whispers... Maybe another time? 🌧️')">Unwanted 🙁</button>
+    </div>
+
+    <!-- Slide 2: Verification -->
+    <div class="slide" id="slide2">
+        <h2>🔐 Yay! Verification Time 🔐</h2>
+        <p>You're truly special! Can you share your name and birthdate?</p>
+        <div class="input-group">
+            <input type="text" id="userName" placeholder="Your Angelic Name 🌸">
+        </div>
+        <div class="dob-container">
+            <select id="birthMonth">
+                <option value="">Birth Moon 🌙</option>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July💖</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <input type="number" id="birthDay" placeholder="Birth Star ⭐" min="1" max="31">
+        </div>
+        <button class="heart-btn" onclick="verifyUser()">Continue ✨</button>
+        <div class="hearts">
+            <div class="heart">❤️</div>
+            <div class="heart">❤️</div>
+            <div class="heart">❤️</div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Quiz -->
+    <div class="slide" id="slide3">
+        <h2>💞 Internship Happiness Quiz 💞</h2>
+        <p>Welcome, Lumine! Ready for a happy quiz about your amazing internship? 🥳</p>
+        <div class="progress-bar">
+            <div class="progress" id="quizProgress"></div>
+        </div>
+        <div id="questionContainer"></div>
+        <div id="optionsContainer"></div>
+    </div>
+
+    <!-- Slide 4: Results and Final Message -->
+    <div class="slide" id="slide4">
+        <h2>Your Results 🎉</h2>
+        <p>Here's how much I believe in you:</p>
+        <div class="love-meter">
+            <div class="love-meter-fill" id="loveMeterFill"></div>
+            <div class="love-meter-text" id="loveMeterText">100%</div>
+        </div>
+        <div class="result-container">
+            <h3>A Special Message 💌</h3>
+            <p id="resultMessage"></p>
+        </div>
+        <h2>Dear Lumine 🌸</h2>
+        <p id="finalMessage"></p>
+        <p>I believe 100% in you!</p>
+        <p>Thank you for being you! I'm <b>so proud of you</b> and can't wait to hear all your stories! 🌟</p>
+        <div class="picture-container">
+            <center><img src="Untitled design (1) 2.png" width="400"></center>
+            
+            
+        </div>
+    </div>
+
+    <div class="footer">Made with lots of love ❤️</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        let currentQuestion = 0;
+        let totalScore = 0;
+        const questions = [
+            {
+                question: "Guess what? You got the internship! How do you feel? 😍",
+                options: [
+                    { text: "Super Excited! 🤩", points: 5 },
+                    { text: "A bit nervous, but happy 😊", points: 4 },
+                    { text: "Still processing... 😅", points: 2 }
+                ]
+            },
+            {
+                question: "Do you think I'm happy for you? 😁",
+                options: [
+                    { text: "Yes, I can feel your happiness! 🥰", points: 5 },
+                    { text: "I hope so! 🤞", points: 4 },
+                    { text: "Maybe... tell me? 🙈", points: 2 }
+                ]
+            },
+            {
+                question: "So, you'll be busy for 2 months... Will you still miss me? 🥹",
+                options: [
+                    { text: "Of course! Every single day 💖", points: 5 },
+                    { text: "I'll try to text you whenever I can! 📱", points: 4 },
+                    { text: "Maybe a little... but I'll be strong! 💪", points: 2 }
+                ]
+            },
+            {
+                question: "What are you most looking forward to during your internship? ✨",
+                options: [
+                    { text: "Learning new things! 📚", points: 5 },
+                    { text: "Making new friends! 🤗", points: 4 },
+                    { text: "Earning some pocket money! 💸", points: 3 }
+                ]
+            },
+            {
+                question: "How will you celebrate your internship success? 🎉",
+                options: [
+                    { text: "With my favorite people (including you!) 🥳", points: 5 },
+                    { text: "With a treat just for me 🍰", points: 4 },
+                    { text: "By dreaming about the future 🌠", points: 3 }
+                ]
+            },
+            {
+                question: "What message would you like to hear from me right now? 💌",
+                options: [
+                    { text: "\"I'm SO proud of you!\" 🥰", points: 5 },
+                    { text: "\"You'll do amazing things!\" 🌟", points: 4 },
+                    { text: "\"Don't forget to rest and smile!\" 😘", points: 3 }
+                ]
+            },
+            {
+                question: "Will you share your internship stories with me? 📖",
+                options: [
+                    { text: "Yes! Can't wait to tell you everything! 😁", points: 5 },
+                    { text: "Of course, whenever I can! ✨", points: 4 },
+                    { text: "Maybe just the highlights! 😅", points: 3 }
+                ]
+            },
+            {
+                question: "What will you do if you ever feel a little overwhelmed? 😌",
+                options: [
+                    { text: "Text you for a pep talk! 📲", points: 5 },
+                    { text: "Take a deep breath and smile 😊", points: 4 },
+                    { text: "Listen to happy music 🎶", points: 3 }
+                ]
+            },
+            {
+                question: "What would make your internship unforgettable? ✨",
+                options: [
+                    { text: "Learning, laughing, and staying connected with you! 💞", points: 5 },
+                    { text: "Doing my best every day! 💪", points: 4 },
+                    { text: "A surprise visit from you! 😏", points: 3 }
+                ]
+            },
+            {
+                question: "Are you ready to shine and make everyone proud? ✨",
+                options: [
+                    { text: "YES! I'm unstoppable! 😎", points: 10 },
+                    { text: "I'll do my best, always! 💪", points: 5 },
+                    { text: "A little nervous, but excited! 🥰", points: 2 }
+                ]
+            }
+        ];
+
+        const maxPossibleScore = questions.reduce((acc, q) => acc + Math.max(...q.options.map(o => o.points)), 0);
+
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+            document.getElementById(`slide${n}`).classList.add('active');
+        }
+
+        function verifyUser() {
+            const name = document.getElementById('userName').value.toLowerCase();
+            const month = document.getElementById('birthMonth').value;
+            const day = document.getElementById('birthDay').value;
+            if (name === 'lumine' && month === '07' && day === '30' || name === 'Lumine' && month === '07' && day === '30' || name === 'vanni' && month === '07' && day === '30' || name === 'Vanni' && month === '07' && day === '30'|| name === 'LUMINE' && month === '07' && day === '30' || name === 'VANNI' && month === '07' && day === '30') {
+                document.querySelectorAll('.heart').forEach(heart => {
+                    heart.style.display = 'block';
+                    setTimeout(() => heart.style.display = 'none', 2000);
+                });
+                setTimeout(() => {
+                    showSlide(3);
+                    loadQuestion();
+                }, 2000);
+            } else {
+                alert("❌ Oops! This quiz is for someone extra special 💔");
+                document.getElementById('slide2').classList.add('shake');
+                setTimeout(() => document.getElementById('slide2').classList.remove('shake'), 500);
+            }
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionContainer').innerHTML = `<h3>${q.question}</h3>`;
+            document.getElementById('optionsContainer').innerHTML = q.options
+                .map((opt, index) => `<div class="quiz-option" onclick="selectOption(${opt.points})">${opt.text}</div>`)
+                .join('');
+            document.getElementById('quizProgress').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+        }
+
+        function selectOption(points) {
+            totalScore += points;
+            if (++currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            showSlide(4);
+            document.getElementById('loveMeterFill').style.width = '100%';
+            document.getElementById('loveMeterText').textContent = '100%';
+            document.getElementById('resultMessage').textContent = getResultMessage(100);
+            document.getElementById('finalMessage').textContent = getFinalMessage();
+            triggerConfetti();
+            addFlyingHearts();
+        }
+
+        function getResultMessage(percentage) {
+            return "Can't wait to celebrate every little victory together! 🎉";
+        }
+
+        function getFinalMessage() {
+            const messages = [
+                "Congratulations on your internship, Lumine! 🌸 I'm so proud of you every new challenge is a chance to grow, and I'll be cheering you on every step of the way! 💖",
+                
+                "No matter how busy you get, remember that you're loved and celebrated. Your happiness means the world to me. Have fun, learn lots, and don't forget to smile! 😊"
+            ];
+            return messages[Math.floor(Math.random() * messages.length)];
+        }
+
+        function triggerConfetti() {
+            const count = 200;
+            const defaults = {
+                origin: { y: 0.7 },
+                colors: ['#ff69b4', '#ff1493', '#ff85c0']
+            };
+            confetti({ ...defaults, particleCount: count, spread: 55 });
+            confetti({ ...defaults, particleCount: count, spread: 100, angle: 60 });
+            confetti({ ...defaults, particleCount: count, spread: 100, angle: 120 });
+            setTimeout(() => confetti({ ...defaults, particleCount: count*2, spread: 150 }), 500);
+        }
+
+        function addFlyingHearts() {
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'flying-heart';
+                heart.textContent = '❤️';
+                heart.style.left = `${Math.random() * 100}vw`;
+                heart.style.fontSize = `${10 + Math.random() * 20}px`;
+                heart.style.animationDuration = `${3 + Math.random() * 4}s`;
+                heart.style.animationDelay = `${Math.random() * 5}s`;
+                document.body.appendChild(heart);
+            }
+        }
+
+        // Real-time input validation
+        document.getElementById('userName').addEventListener('keyup', function() {
+            if (this.value.toLowerCase() === 'lumine') {
+                this.classList.add('input-correct');
+                this.classList.remove('input-incorrect');
+            } else {
+                this.classList.add('input-incorrect');
+                this.classList.remove('input-correct');
+            }
+        });
+
+        document.getElementById('birthMonth').addEventListener('change', function() {
+            if (this.value === '07') {
+                this.classList.add('input-correct');
+                this.classList.remove('input-incorrect');
+            } else {
+                this.classList.add('input-incorrect');
+                this.classList.remove('input-correct');
+            }
+        });
+
+        document.getElementById('birthDay').addEventListener('input', function() {
+            if (this.value === '30') {
+                this.classList.add('input-correct');
+                this.classList.remove('input-incorrect');
+            } else {
+                this.classList.add('input-incorrect');
+                this.classList.remove('input-correct');
+            }
+        });
+    </script>
+</body>
+</html>
